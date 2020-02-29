@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="slot-machine",
-    version="0.0.2",
+    version="0.0.4",
     author="Ruslan Andrusyak",
     description="Slot Machine Simulator",
     long_description=long_description,
@@ -18,4 +18,8 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     python_requires='>=3.6',
+    install_requires=[
+        "numpy",
+        "matplotlib",
+    ],
 )

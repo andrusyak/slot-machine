@@ -22,17 +22,18 @@ def slot_machine(credit):
         
         if score == 0:
             credit -= 10
-            text("You have won $0\n", color="g")
+            text("You have won $0\n", color="b", size=30)
             text("Now you have $%s" %credit)
             
         elif score == 1:
             credit -= 5
-            text("You have won $5\n", color="b")
+            text("You have won $5\n", color="g", size=30)
             text("Now you have $%s" %credit)
             
         elif score == 3:
             credit += 90
-            text("Congratulation!!!\nYou have won $100\n", color="r")
+            text("Congratulation!!!", y=0.3, color="r", size=25)
+            text("You have won $100\n", color="r", size=30)
             text("Now you have $%s" %credit)
         
         yield credit
