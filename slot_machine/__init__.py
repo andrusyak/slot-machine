@@ -1,68 +1,77 @@
-import numpy as np
-import matplotlib.pyplot as plt
 from itertools import combinations
+from random import choices
+
+import matplotlib.pyplot as plt
 
 
 
-def text(s, y=0, size=35, **kwargs):
+class SlotMachine:
+    
+    def __init__(self, credit=100):
+        self.init_credit = credit
+        self.credit = self.init_credit
+        self.text("You have $%s" %self.credit, y=0.5)
+    
+    
+    def text(self, s, y=0, size=35, **kwargs):
         plt.axis("off")
+        
         return plt.text(0.5, y, s, size=size, horizontalalignment="center", **kwargs)
-
-
-
-def slot_machine(credit):
-    text("You have $%s" %credit, y=0.5)
-    yield credit
     
-    while credit >= 10:
-        choice = np.random.choice(["\u2654", "\u2655", "\u2656", "\u2657", "\u2658", "\u2659"], 3)
-        plt.cla()
-        text(" ".join(choice), y=0.5, size=100)
-        score = sum([c[0] == c[1] for c in combinations(choice, 2)])
-        
-        if score == 0:
-            credit -= 10
-            text("You have won $0\n", color="b", size=30)
-            text("Now you have $%s" %credit)
-            
-        elif score == 1:
-            credit -= 5
-            text("You have won $5\n", color="g", size=30)
-            text("Now you have $%s" %credit)
-            
-        elif score == 3:
-            credit += 90
-            text("Congratulation!!!", y=0.3, color="r", size=25)
-            text("You have won $100\n", color="r", size=30)
-            text("Now you have $%s" %credit)
-        
-        yield credit
-
-
-
-def game(credit=100):
-    global game_gener
-    game_gener = slot_machine(credit)
-
-
-
-def spin():
-    global credit
     
-    try:
-        credit = next(game_gener)
+    def __iter__(self):
+        self.credit = self.init_credit
         
-    except StopIteration:
         plt.cla()
+        self.text("You have $%s" %self.credit, y=0.5)
         
-        if credit > 0:
-            text("You have only $%s!" %credit, y=0.5)
-            text("GAME OVER!!!", y=0.2, color="r")
+        return self
+    
+    
+    def __next__(self):
+        
+        while self.credit >= 10:
+            choice = choices(["\u2654", "\u2655", "\u2656", "\u2657", "\u2658", "\u2659"], k=3)
+            score = sum([c[0] == c[1] for c in combinations(choice, 2)])
             
-        else:
-            text("You have lost all money!", y=0.5)
-            text("GAME OVER!!!", y=0.2, color="r")
+            plt.cla()
+            self.text(" ".join(choice), y=0.5, size=100)
 
+            if score == 0:
+                self.credit -= 10
+                self.text("You have won $0\n", color="b", size=30)
+                self.text("Now you have $%s" %self.credit)
 
+            elif score == 1:
+                self.credit -= 5
+                self.text("You have won $5\n", color="g", size=30)
+                self.text("Now you have $%s" %self.credit)
 
-game()
+            elif score == 3:
+                self.credit += 90
+                self.text("Congratulation!!!", y=0.3, color="r", size=25)
+                self.text("You have won $100\n", color="r", size=30)
+                self.text("Now you have $%s" %self.credit)
+
+            return self.credit
+        raise StopIteration
+    
+    
+    def restart(self):
+        self.__iter__()
+    
+    
+    def spin(self): 
+        try:
+            self.credit = self.__next__()
+
+        except StopIteration:
+            plt.cla()
+
+            if self.credit > 0:
+                self.text("You have only $%s!" %self.credit, y=0.5)
+                self.text("GAME OVER!!!", y=0.2, color="r")
+
+            else:
+                self.text("You have lost all money!", y=0.5)
+                self.text("GAME OVER!!!", y=0.2, color="r")
